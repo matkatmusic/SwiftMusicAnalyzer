@@ -107,6 +107,7 @@
 				EA2DA66B2BE07FC000223CF5 /* MusicPlayer.swift */,
 				EA2DA6422BE07FAD00223CF5 /* ContentView.swift */,
 				EA2DA6442BE07FAF00223CF5 /* Assets.xcassets */,
+				EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */,
 				EA2DA6462BE07FAF00223CF5 /* MusicAnalyzer.entitlements */,
 				EA2DA6472BE07FAF00223CF5 /* Preview Content */,
 				EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */,
@@ -136,7 +137,6 @@
 			children = (
 				EA2DA65C2BE07FAF00223CF5 /* MusicAnalyzerUITests.swift */,
 				EA2DA65E2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift */,
-				EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */,
 			);
 			path = MusicAnalyzerUITests;
 			sourceTree = "<group>";
