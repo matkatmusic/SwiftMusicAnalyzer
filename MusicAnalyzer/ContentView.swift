@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    var musicPlayer: MusicPlayer
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Analyzer()
+            PlayerControls(musicPlayer: musicPlayer).frame(height: 100)
+            musicPlayer.frame(height: 250)
         }
         .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(musicPlayer: MusicPlayer())
 }

@@ -14,6 +14,10 @@
 		EA2DA6532BE07FAF00223CF5 /* MusicAnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6522BE07FAF00223CF5 /* MusicAnalyzerTests.swift */; };
 		EA2DA65D2BE07FAF00223CF5 /* MusicAnalyzerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA65C2BE07FAF00223CF5 /* MusicAnalyzerUITests.swift */; };
 		EA2DA65F2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA65E2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift */; };
+		EA2DA66C2BE07FC000223CF5 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA66B2BE07FC000223CF5 /* MusicPlayer.swift */; };
+		EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */; };
+		EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6712BE07FF500223CF5 /* Analyzer.swift */; };
+		EA2DA6742BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +49,10 @@
 		EA2DA6582BE07FAF00223CF5 /* MusicAnalyzerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MusicAnalyzerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA2DA65C2BE07FAF00223CF5 /* MusicAnalyzerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicAnalyzerUITests.swift; sourceTree = "<group>"; };
 		EA2DA65E2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicAnalyzerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		EA2DA66B2BE07FC000223CF5 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
+		EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
+		EA2DA6712BE07FF500223CF5 /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
+		EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Know Myself - Patrick Patrikios.mp3"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,10 +104,13 @@
 			isa = PBXGroup;
 			children = (
 				EA2DA6402BE07FAD00223CF5 /* MusicAnalyzerApp.swift */,
+				EA2DA66B2BE07FC000223CF5 /* MusicPlayer.swift */,
 				EA2DA6422BE07FAD00223CF5 /* ContentView.swift */,
 				EA2DA6442BE07FAF00223CF5 /* Assets.xcassets */,
 				EA2DA6462BE07FAF00223CF5 /* MusicAnalyzer.entitlements */,
 				EA2DA6472BE07FAF00223CF5 /* Preview Content */,
+				EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */,
+				EA2DA6712BE07FF500223CF5 /* Analyzer.swift */,
 			);
 			path = MusicAnalyzer;
 			sourceTree = "<group>";
@@ -125,6 +136,7 @@
 			children = (
 				EA2DA65C2BE07FAF00223CF5 /* MusicAnalyzerUITests.swift */,
 				EA2DA65E2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift */,
+				EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */,
 			);
 			path = MusicAnalyzerUITests;
 			sourceTree = "<group>";
@@ -233,6 +245,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA2DA6742BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 in Resources */,
 				EA2DA6492BE07FAF00223CF5 /* Preview Assets.xcassets in Resources */,
 				EA2DA6452BE07FAF00223CF5 /* Assets.xcassets in Resources */,
 			);
@@ -259,8 +272,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */,
 				EA2DA6432BE07FAD00223CF5 /* ContentView.swift in Sources */,
+				EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */,
 				EA2DA6412BE07FAD00223CF5 /* MusicAnalyzerApp.swift in Sources */,
+				EA2DA66C2BE07FC000223CF5 /* MusicPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
