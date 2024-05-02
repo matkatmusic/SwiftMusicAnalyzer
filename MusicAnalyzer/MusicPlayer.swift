@@ -35,7 +35,24 @@ class Magnitude: ObservableObject {
     {
         didSet
         {
-            print( "Magnitude: \(magnitude)" )
+//            print( "Magnitude: \(magnitude)" )
+        }
+    }
+}
+
+class Buffer: ObservableObject {
+    @Published var buffer: AVAudioPCMBuffer?
+    {
+        didSet
+        {
+            if buffer != nil
+            {
+                print( "buffer size: \(buffer!.frameLength)")
+            }
+            else
+            {
+                print ("buffer is nil")
+            }
         }
     }
 }
@@ -101,15 +118,8 @@ struct MusicPlayer: View {
     @ObservedObject var audioFileLoader = AudioFileLoader()
     @State private var mixer: AVAudioMixerNode = AVAudioMixerNode()
     
-    @State private var buffer: AVAudioPCMBuffer = AVAudioPCMBuffer()
-    {
-        didSet
-        {
-//            print( "Buffer: \(buffer.frameLength)" )
-        }
-    }
-    
     @ObservedObject var magnitude = Magnitude()
+    @ObservedObject var buffer = Buffer()
     
     
     func removeConnections()
@@ -148,7 +158,7 @@ struct MusicPlayer: View {
                 DispatchQueue.main.async {
                     self.magnitude.magnitude = rms
 //                    print( "Magnitude: \(rms)" )
-                    self.buffer = buffer
+                    self.buffer.buffer = buffer
                 }
             })
         }
