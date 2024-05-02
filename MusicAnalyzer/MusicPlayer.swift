@@ -30,9 +30,38 @@ class AudioFileLoader: ObservableObject {
     }
 }
 
+class Magnitude: ObservableObject {
+    @Published var magnitude: CGFloat = 0
+    {
+        didSet
+        {
+            print( "Magnitude: \(magnitude)" )
+        }
+    }
+}
+
+struct Meter : View
+{
+    @Binding var mag: CGFloat
+    var body : some View {
+        GeometryReader
+        { geometry in
+            let h = geometry.size.height
+            let w = geometry.size.width
+            Rectangle().frame(width: w,
+                              height: h * mag)
+            .foregroundColor(.yellow)
+            .offset(y: (1 - mag) * h)
+        }
+        .background(.black)
+    }
+}
+
 struct MusicPlayer: View {
     var body: some View {
         Text("Music Player")
+        Meter(mag: $magnitude.magnitude)
+            .frame(width: 100, height: 300)
     }
     
     func togglePlay(start: Bool)
@@ -72,19 +101,20 @@ struct MusicPlayer: View {
     @ObservedObject var audioFileLoader = AudioFileLoader()
     @State private var mixer: AVAudioMixerNode = AVAudioMixerNode()
     
-    @State private var buffer: AVAudioPCMBuffer?
+    @State private var buffer: AVAudioPCMBuffer = AVAudioPCMBuffer()
     {
         didSet
         {
-            if let buffer = buffer
-            {
-                print( "Buffer: \(buffer.frameLength)" )
-            }
+//            print( "Buffer: \(buffer.frameLength)" )
         }
     }
     
+    @ObservedObject var magnitude = Magnitude()
+    
+    
     func removeConnections()
     {
+        audioPlayerNode.removeTap(onBus: 0)
         audioEngine.disconnectNodeOutput(audioPlayerNode)
         audioEngine.disconnectNodeOutput(mixer)
         audioEngine.disconnectNodeOutput(audioEngine.outputNode)
@@ -100,6 +130,27 @@ struct MusicPlayer: View {
             
             audioEngine.attach(audioPlayerNode)
             audioEngine.connect(audioPlayerNode, to: mixer, format: nil)
+            audioPlayerNode.installTap(onBus: 0, bufferSize: 512, format: nil, block: {
+                buffer, time in
+//                self.buffer = buffer
+                let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![0], 
+                                                           count: Int(buffer.frameLength)))
+                
+                var sum: CGFloat = 0
+                for i in 0..<floatArray.count
+                {
+                    sum += CGFloat(floatArray[i] * floatArray[i])
+                }
+                
+                sum = sum / CGFloat(floatArray.count)
+                let rms = sqrt(sum)
+                
+                DispatchQueue.main.async {
+                    self.magnitude.magnitude = rms
+//                    print( "Magnitude: \(rms)" )
+                    self.buffer = buffer
+                }
+            })
         }
         catch
         {

@@ -12,8 +12,8 @@ struct ContentView: View {
     var musicPlayer: MusicPlayer
     var body: some View {
         VStack {
-            Analyzer()
-            PlayerControls(musicPlayer: musicPlayer).frame(height: 100)
+            Analyzer(magnitudes: [0.3, 0.5, 0.8])//.frame(height:200)
+            PlayerControls(musicPlayer: musicPlayer)//.frame(height: 100)
             musicPlayer.frame(height: 250)
         }
         .padding()
