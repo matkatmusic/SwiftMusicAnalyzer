@@ -9,17 +9,45 @@ import SwiftUI
 import AVFAudio
 
 struct ContentView: View {
+    @ObservedObject var audioEngineManager: AudioEngineManager
+    
     var musicPlayer: MusicPlayer
+    var analyzer: Analyzer
+    var playerControls: PlayerControls
+    
     var body: some View {
-        VStack {
-            Analyzer(magnitudes: [0.3, 0.5, 0.8])//.frame(height:200)
-            PlayerControls(musicPlayer: musicPlayer)//.frame(height: 100)
+        return VStack {
+            analyzer
+            playerControls
             musicPlayer.frame(height: 250)
         }
         .padding()
     }
+    
+    init(audioEngineManager: AudioEngineManager) {
+        self.audioEngineManager = audioEngineManager
+        analyzer = Analyzer()
+        
+        musicPlayer = MusicPlayer(buffer: audioEngineManager.buffer)
+        playerControls = PlayerControls(musicPlayer: audioEngineManager)
+        
+        self.audioEngineManager.buffer.addListener(analyzer.binManager)
+    }
 }
 
 #Preview {
-    ContentView(musicPlayer: MusicPlayer())
+    let numOutputs = 2
+    let numSamples = 1024
+    
+    let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatFloat32,
+                               sampleRate: 48000,
+                               channels: AVAudioChannelCount(numOutputs),
+                               interleaved: false)!
+    
+    let buffer = AVAudioPCMBuffer(pcmFormat: format,
+                                     frameCapacity: AVAudioFrameCount(numSamples))!
+    
+    let audioBuffer = AudioBuffer(buffer: buffer)
+    let aem = AudioEngineManager(buffer: audioBuffer)
+    return ContentView(audioEngineManager: aem)
 }
