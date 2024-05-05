@@ -19,6 +19,9 @@
 		EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6712BE07FF500223CF5 /* Analyzer.swift */; };
 		EA2DA6742BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */; };
 		EA2DA6762BE730A900223CF5 /* Meter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6752BE730A900223CF5 /* Meter.swift */; };
+		EA2DA6792BE7315300223CF5 /* ObservedFloat.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */; };
+		EA2DA67B2BE7318100223CF5 /* AudioFileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */; };
+		EA2DA67D2BE731BE00223CF5 /* AudioBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +58,9 @@
 		EA2DA6712BE07FF500223CF5 /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Know Myself - Patrick Patrikios.mp3"; sourceTree = "<group>"; };
 		EA2DA6752BE730A900223CF5 /* Meter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meter.swift; sourceTree = "<group>"; };
+		EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservedFloat.swift; sourceTree = "<group>"; };
+		EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileLoader.swift; sourceTree = "<group>"; };
+		EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioBuffer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,7 @@
 		EA2DA63F2BE07FAD00223CF5 /* MusicAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
+				EA2DA6772BE7314500223CF5 /* Tools */,
 				EA2DA6402BE07FAD00223CF5 /* MusicAnalyzerApp.swift */,
 				EA2DA66B2BE07FC000223CF5 /* MusicPlayer.swift */,
 				EA2DA6422BE07FAD00223CF5 /* ContentView.swift */,
@@ -142,6 +149,16 @@
 				EA2DA65E2BE07FAF00223CF5 /* MusicAnalyzerUITestsLaunchTests.swift */,
 			);
 			path = MusicAnalyzerUITests;
+			sourceTree = "<group>";
+		};
+		EA2DA6772BE7314500223CF5 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */,
+				EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */,
+				EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +292,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA2DA6792BE7315300223CF5 /* ObservedFloat.swift in Sources */,
+				EA2DA67B2BE7318100223CF5 /* AudioFileLoader.swift in Sources */,
+				EA2DA67D2BE731BE00223CF5 /* AudioBuffer.swift in Sources */,
 				EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */,
 				EA2DA6432BE07FAD00223CF5 /* ContentView.swift in Sources */,
 				EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */,

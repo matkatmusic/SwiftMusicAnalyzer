@@ -9,30 +9,7 @@ import SwiftUI
 
 import AVFoundation
 
-class AudioFileLoader: ObservableObject {
-    @Published var audioFile: AVAudioFile?
 
-    func loadFile() {
-        let sound = Bundle.main.path(forResource: "Know Myself - Patrick Patrikios", ofType: "mp3")
-        guard let url = sound else {
-            print("MP3 not found")
-            return
-        }
-
-        let mp3URL = URL(fileURLWithPath: url)
-
-        do {
-            let file = try AVAudioFile(forReading: mp3URL)
-            audioFile = file
-        } catch {
-            print("Error loading audio file: \(error.localizedDescription)")
-        }
-    }
-}
-
-class ObservedFloat: ObservableObject {
-    @Published var value: CGFloat = 0
-}
 
 class Magnitudes: ObservableObject
 {
@@ -124,51 +101,6 @@ func copyBuffer(source: AVAudioPCMBuffer, destination: inout AVAudioPCMBuffer)
     }
     
 //    printBufferInfo(buffer: destination)
-}
-
-
-class AudioBuffer: ObservableObject
-{
-    @Published var buffer: AVAudioPCMBuffer
-    var listeners = [AudioBufferListener]()
-    
-    init(buffer: AVAudioPCMBuffer) {
-        self.buffer = buffer
-        printBufferInfo(buffer: buffer)
-        printBufferInfo(buffer: self.buffer)
-        print( "ok" )
-    }
-    
-    func updateData(data: AVAudioPCMBuffer)
-    {
-        copyBuffer(source: data, destination: &self.buffer)
-
-        /*
-         When not passing data to this function and instead using self.buffer for each of the listeners being passed a buffer to process, the copy of the buffer is empty.
-         When instead passing a copy of 'data' into notifyListeners,
-         the copy is not empty.
-         
-         Something happens to 'self.buffer' between when notifyListeners is called, and when the forEach() call happens and I don't know what it is, but it is causing self.buffer to be empty.
-         That tells me that the copy step above where samples are copied from 'data' into self.buffer's channels is erroneous.
-         */
-        notifyListeners()
-    }
-    
-    func addListener(_ listener: AudioBufferListener) {
-        listeners.append(listener)
-    }
-
-    func removeListener(_ listener: AudioBufferListener) {
-        listeners = listeners.filter { $0 !== listener }
-    }
-    
-    private func notifyListeners(/*data: AVAudioPCMBuffer*/)
-    {
-        listeners.forEach({ listener in
-            var copy = self.buffer
-            listener.bufferDidChange(buffer: copy)
-        })
-    }
 }
 
 
