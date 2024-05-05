@@ -18,6 +18,7 @@
 		EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */; };
 		EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6712BE07FF500223CF5 /* Analyzer.swift */; };
 		EA2DA6742BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */; };
+		EA2DA6762BE730A900223CF5 /* Meter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6752BE730A900223CF5 /* Meter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
 		EA2DA6712BE07FF500223CF5 /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		EA2DA6732BE081EF00223CF5 /* Know Myself - Patrick Patrikios.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Know Myself - Patrick Patrikios.mp3"; sourceTree = "<group>"; };
+		EA2DA6752BE730A900223CF5 /* Meter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				EA2DA6472BE07FAF00223CF5 /* Preview Content */,
 				EA2DA66D2BE07FD700223CF5 /* PlayerControls.swift */,
 				EA2DA6712BE07FF500223CF5 /* Analyzer.swift */,
+				EA2DA6752BE730A900223CF5 /* Meter.swift */,
 			);
 			path = MusicAnalyzer;
 			sourceTree = "<group>";
@@ -275,6 +278,7 @@
 				EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */,
 				EA2DA6432BE07FAD00223CF5 /* ContentView.swift in Sources */,
 				EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */,
+				EA2DA6762BE730A900223CF5 /* Meter.swift in Sources */,
 				EA2DA6412BE07FAD00223CF5 /* MusicAnalyzerApp.swift in Sources */,
 				EA2DA66C2BE07FC000223CF5 /* MusicPlayer.swift in Sources */,
 			);
