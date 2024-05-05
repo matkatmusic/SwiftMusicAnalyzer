@@ -111,7 +111,7 @@ class BinManager : AudioBufferListener
             binTotals[i] /= Float(binTotals.count)
         }
         
-        print( "bins: \(binTotals.count)")
+//        print( "bins: \(binTotals.count)")
         self.bins.values = binTotals //this should refresh the view
     }
 }

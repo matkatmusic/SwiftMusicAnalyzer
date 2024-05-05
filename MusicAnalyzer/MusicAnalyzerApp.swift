@@ -83,10 +83,8 @@ class AudioEngineManager: NSObject, ObservableObject {
                     self.magnitude.magnitude = avgRMS
 //                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
                     //copy data to buffer
-                    
-                    
-                    printMemoryAddress(bufferCopy, message: "DispatchQueue.main.async")
-                    printMemoryAddress(self.buffer.buffer, message: "DispatchQueue.main.async")
+//                    printMemoryAddress(bufferCopy, message: "DispatchQueue.main.async")
+//                    printMemoryAddress(self.buffer.buffer, message: "DispatchQueue.main.async")
                     self.buffer.updateData(data: bufferCopy)
                 }
             })
