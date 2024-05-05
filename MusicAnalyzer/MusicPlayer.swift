@@ -62,10 +62,76 @@ class Buffer: ObservableObject {
     }
 }
 
+func printBufferInfo(buffer: AVAudioPCMBuffer)
+{
+    print( "buffer info: format.channelCount \(buffer.format.channelCount)")
+    print( "buffer info: frameLength       : \(buffer.frameLength)")
+    print( "buffer info: frameCapacity     : \(buffer.frameCapacity)" )
+    print( "buffer info: magnitude : \(AudioEngineManager.computeMagnitude(buffer: buffer, chan: 0))")
+}
+
 protocol AudioBufferListener: AnyObject
 {
-    func bufferDidChange(buffer: inout AVAudioPCMBuffer)
+    func bufferDidChange(buffer: AVAudioPCMBuffer)
 }
+
+func copyBuffer(source: AVAudioPCMBuffer, destination: inout AVAudioPCMBuffer) 
+{
+//    printBufferInfo(buffer: source)
+
+    var recreateDestination: Bool = false
+    if( destination.format.channelCount != source.format.channelCount )
+    {
+        recreateDestination = true
+    }
+    else if( destination.frameLength != source.frameLength )
+    {
+        recreateDestination = true
+    }
+    else if( destination.frameCapacity != source.frameCapacity )
+    {
+        recreateDestination = true
+    }
+    
+    if( recreateDestination )
+    {
+        print( "recreating destination to match sizes!!" )
+        let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatFloat32,
+                                   sampleRate: source.format.sampleRate,
+                                   channels: source.format.channelCount,
+                                   interleaved: false)!
+        
+        let buffer = AVAudioPCMBuffer(pcmFormat: format,
+                                         frameCapacity: source.frameCapacity)!
+        
+    
+        buffer.frameLength = source.frameLength
+        destination = buffer
+    }
+    
+    
+    guard let sourceData = source.floatChannelData,
+          let destinationData = destination.floatChannelData else {
+        return
+    }
+
+
+    let channels = Int(source.format.channelCount)
+    let frames = Int(source.frameLength)
+
+    for channel in 0..<channels {
+        let sourceChannelData = sourceData[channel]
+        let destinationChannelData = destinationData[channel]
+
+        // Copy data from source buffer to destination buffer
+        memcpy(destinationChannelData, 
+               sourceChannelData,
+               MemoryLayout<Float>.size * frames)
+    }
+    
+//    printBufferInfo(buffer: destination)
+}
+
 
 class AudioBuffer: ObservableObject
 {
@@ -74,30 +140,24 @@ class AudioBuffer: ObservableObject
     
     init(buffer: AVAudioPCMBuffer) {
         self.buffer = buffer
+        printBufferInfo(buffer: buffer)
+        printBufferInfo(buffer: self.buffer)
+        print( "ok" )
     }
     
     func updateData(data: AVAudioPCMBuffer)
     {
-        var changed = false
-        for frame in 0..<Int(data.frameLength)
-        {
-            for channel in 0..<data.format.channelCount
-            {
-                if( channel < (self.buffer.format.channelCount) )
-                {
-                    if( frame < self.buffer.frameCapacity )
-                    {
-                        self.buffer.floatChannelData![Int(channel)][frame] = data.floatChannelData![Int(channel)][frame]
-                        changed = true
-                    }
-                }
-            }
-        }
-        
-        if changed
-        {
-            notifyListeners()
-        }
+        copyBuffer(source: data, destination: &self.buffer)
+
+        /*
+         When not passing data to this function and instead using self.buffer for each of the listeners being passed a buffer to process, the copy of the buffer is empty.
+         When instead passing a copy of 'data' into notifyListeners,
+         the copy is not empty.
+         
+         Something happens to 'self.buffer' between when notifyListeners is called, and when the forEach() call happens and I don't know what it is, but it is causing self.buffer to be empty.
+         That tells me that the copy step above where samples are copied from 'data' into self.buffer's channels is erroneous.
+         */
+        notifyListeners()
     }
     
     func addListener(_ listener: AudioBufferListener) {
@@ -108,10 +168,11 @@ class AudioBuffer: ObservableObject
         listeners = listeners.filter { $0 !== listener }
     }
     
-    private func notifyListeners()
+    private func notifyListeners(/*data: AVAudioPCMBuffer*/)
     {
         listeners.forEach({ listener in
-            listener.bufferDidChange(buffer: &self.buffer)
+            var copy = self.buffer
+            listener.bufferDidChange(buffer: copy)
         })
     }
 }
@@ -140,136 +201,9 @@ struct MusicPlayer: View {
             .frame(width: 100, height: 300)
     }
     
-//    func togglePlay(start: Bool)
-//    {
-//        if( start )
-//        {
-//            play()
-//        }
-//        else
-//        {
-//            audioPlayerNode.stop()
-//            removeConnections()
-//            
-//            audioEngine.stop()
-//            print( "Stopping" )
-//        }
-//    }
-//    
-//    func play()
-//    {
-//        if( audioEngine.isRunning == false )
-//        {
-//            createConnections()
-//        }
-//        
-//        if( audioFileLoader.audioFile == nil )
-//        {
-//            audioFileLoader.loadFile()
-//        }
-//         
-//        audioPlayerNode.scheduleFile(audioFileLoader.audioFile!, at: nil, completionHandler: nil)
-//        audioPlayerNode.play()
-//        print( "Playing" )
-//    }
-    
-//    @State private var audioEngine: AVAudioEngine = AVAudioEngine()
-//    @State private var audioPlayerNode: AVAudioPlayerNode = AVAudioPlayerNode()
-//    @ObservedObject var audioFileLoader = AudioFileLoader()
-//    @State private var mixer: AVAudioMixerNode = AVAudioMixerNode()
-    
     @ObservedObject var magnitude = Magnitude()
-    @ObservedObject var buffer: AudioBuffer
-    
-    
-//    func removeConnections()
-//    {
-//        audioEngine.disconnectNodeOutput(audioPlayerNode)
-//        audioEngine.disconnectNodeOutput(mixer)
-//        audioEngine.disconnectNodeOutput(audioEngine.outputNode)
-//        
-//        audioPlayerNode.removeTap(onBus: 0)
-//    }
-//    
-//    func createConnections()
-//    {
-//        do
-//        {
-//            audioEngine.attach(mixer)
-//            audioEngine.connect(mixer, to: audioEngine.outputNode, format: nil)
-//            try audioEngine.start()
-//            
-//            audioEngine.attach(audioPlayerNode)
-//            audioEngine.connect(audioPlayerNode, to: mixer, format: nil)
-//            audioPlayerNode.installTap(onBus: 0, bufferSize: 512, format: nil, block: {
-//                buffer, time in
-////                self.buffer = buffer
-//                let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![0], 
-//                                                           count: Int(buffer.frameLength)))
-//                
-//                var sum: CGFloat = 0
-//                for i in 0..<floatArray.count
-//                {
-//                    sum += CGFloat(floatArray[i] * floatArray[i])
-//                }
-//                
-//                sum = sum / CGFloat(floatArray.count)
-//                let rms = sqrt(sum)
-//                
-//                DispatchQueue.main.async {
-//                    self.magnitude.magnitude = rms
-////                    print( "Magnitude: \(rms)" )
-//                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
-//                    //copy data to buffer
-//                    self.buffer.updateData(data: buffer)
-////                    for frame in 0..<Int(buffer.frameLength)
-////                    {
-////                        for channel in 0..<buffer.format.channelCount
-////                        {
-////                            if( channel < (self.buffer.buffer?.format.channelCount)! )
-////                            {
-////                                if( frame < self.buffer.buffer!.frameCapacity )
-////                                {
-////                                    self.buffer.buffer?.floatChannelData![Int(channel)][frame] = buffer.floatChannelData![Int(channel)][frame]
-////                                }
-////                            }
-////                        }
-////                    }
-//                    
-////                    self.buffer.buffer = AVAudioPCMBuffer(pcmFormat: buffer.format, frameCapacity: buffer.frameCapacity)
-////                    self.buffer.buffer?.frameLength = buffer.frameLength
-////                    let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![0], count: Int(buffer.frameLength)))
-////                    var floatArray2 = Array(UnsafeBufferPointer(start: self.buffer.buffer!.floatChannelData![0], count: Int(buffer.frameLength)))
-////                    for i in 0..<floatArray.count
-////                    {
-////                        floatArray2[i] = floatArray[i]
-////                    }
-//                    
-////                    self.buffer.buffer = buffer
-//                }
-//            })
-//        }
-//        catch
-//        {
-//            print( "Error configuring connections: \(error.localizedDescription)" )
-//        }
-//    }
 }
 
 #Preview {
-    let session = AVAudioSession.sharedInstance()
-    
-    let numOutputs = session.outputNumberOfChannels
-    let numSamples = session.ioBufferDuration * session.sampleRate
-    
-    let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatFloat32,
-                               sampleRate: session.sampleRate,
-                               channels: AVAudioChannelCount(numOutputs),
-                               interleaved: false)!
-    
-    let buffer = AVAudioPCMBuffer(pcmFormat: format,
-                                     frameCapacity: AVAudioFrameCount(numSamples))!
-    
-    let audioBuffer = AudioBuffer(buffer: buffer)
-    return MusicPlayer(buffer: audioBuffer)
+    return MusicPlayer()
 }

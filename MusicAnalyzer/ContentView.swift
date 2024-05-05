@@ -11,7 +11,8 @@ import AVFAudio
 struct ContentView: View {
     @ObservedObject var audioEngineManager: AudioEngineManager
     
-    var musicPlayer: MusicPlayer
+//    var musicPlayer: MusicPlayer
+    var meter: Meter
     var analyzer: Analyzer
     var playerControls: PlayerControls
     
@@ -19,7 +20,7 @@ struct ContentView: View {
         return VStack {
             analyzer
             playerControls
-            musicPlayer.frame(height: 250)
+            meter.frame(height: 250)
         }
         .padding()
     }
@@ -28,7 +29,8 @@ struct ContentView: View {
         self.audioEngineManager = audioEngineManager
         analyzer = Analyzer()
         
-        musicPlayer = MusicPlayer(buffer: audioEngineManager.buffer)
+//        meter = MusicPlayer(buffer: audioEngineManager.buffer)
+        meter = Meter(mag: audioEngineManager.$magnitude.magnitude)
         playerControls = PlayerControls(musicPlayer: audioEngineManager)
         
         self.audioEngineManager.buffer.addListener(analyzer.binManager)

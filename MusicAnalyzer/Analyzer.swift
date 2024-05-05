@@ -51,22 +51,17 @@ class Bins: ObservableObject
 class BinManager : AudioBufferListener
 {
     @ObservedObject var bins: Bins = Bins()
-    func bufferDidChange(buffer: inout AVAudioPCMBuffer)
-    {
-        refreshBins(buffer: &buffer)
-    }
-    
-    func refreshBins(buffer: inout AVAudioPCMBuffer)
+    func bufferDidChange(buffer: AVAudioPCMBuffer)
     {
         if( buffer.floatChannelData == nil )
         {
-            print("No audio data in buffer")
+            print("No channel data in buffer")
             return
         }
         
         if( buffer.frameLength == 0 )
         {
-            print("No audio data in buffer")
+//            print("No audio data in buffer")
             return
         }
         
@@ -76,6 +71,11 @@ class BinManager : AudioBufferListener
             return
         }
         
+        refreshBins(buffer: buffer)
+    }
+    
+    func refreshBins(buffer: AVAudioPCMBuffer)
+    {
         var binTotals: [Float] = []
         for chan in 0 ..< buffer.stride
         {

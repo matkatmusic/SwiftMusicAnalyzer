@@ -7,33 +7,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BF30B870-5B55-4920-98FD-451089FBEADA"
+            uuid = "E34DA679-0992-44EA-B4F2-2E2430E3BF7F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MusicAnalyzer/MusicPlayer.swift"
+            filePath = "MusicAnalyzer/MusicAnalyzerApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
-            landmarkName = "MusicPlayer"
-            landmarkType = "14">
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "setupAudioEngine()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "96BE7220-F07A-40DA-ADB7-2C163ACBB7E7"
+            uuid = "F306E461-B249-48E9-9B4E-5B3B8DF82880"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MusicAnalyzer/MusicPlayer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
-            landmarkName = "MusicPlayer"
-            landmarkType = "14">
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "copyBuffer(source:destination:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3B67466A-4270-44FD-9DF8-47A1A05D0CCF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MusicAnalyzer/MusicAnalyzerApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "init()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

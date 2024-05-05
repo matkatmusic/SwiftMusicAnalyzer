@@ -35,7 +35,7 @@ class AudioEngineManager: NSObject, ObservableObject {
         setupAudioEngine()
     }
 
-    func computeMagnitude(buffer: AVAudioPCMBuffer, chan: UInt32) -> CGFloat
+    static func computeMagnitude(buffer: AVAudioPCMBuffer, chan: UInt32) -> CGFloat
     {
         let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![Int(chan)],
                                                    count: Int(buffer.frameLength)))
@@ -71,17 +71,23 @@ class AudioEngineManager: NSObject, ObservableObject {
                 var avgRMS = 0.0
                 for ch in 0 ..< buffer.format.channelCount
                 {
-                    let rms = self.computeMagnitude(buffer: buffer, chan: ch)
+                    let rms = AudioEngineManager.computeMagnitude(buffer: buffer, chan: ch)
                     avgRMS += rms
                 }
                 
                 avgRMS /= Double(buffer.format.channelCount)
                 
+                let bufferCopy = buffer
+                
                 DispatchQueue.main.async {
                     self.magnitude.magnitude = avgRMS
-                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
+//                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
                     //copy data to buffer
-                    self.buffer.updateData(data: buffer)
+                    
+                    
+                    printMemoryAddress(bufferCopy, message: "DispatchQueue.main.async")
+                    printMemoryAddress(self.buffer.buffer, message: "DispatchQueue.main.async")
+                    self.buffer.updateData(data: bufferCopy)
                 }
             })
             
@@ -163,7 +169,7 @@ struct MusicAnalyzerApp: App {
         }
         
         let numOutputs = session.outputNumberOfChannels
-        let numSamples = session.ioBufferDuration * session.sampleRate
+        let numSamples = session.ioBufferDuration * session.sampleRate * Double(numOutputs)
         
         let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatFloat32,
                                    sampleRate: session.sampleRate,
@@ -172,6 +178,27 @@ struct MusicAnalyzerApp: App {
         
         let buffer = AVAudioPCMBuffer(pcmFormat: format,
                                          frameCapacity: AVAudioFrameCount(numSamples))!
+        
+        let channels = buffer.format.channelCount
+        let frameLength = buffer.frameCapacity
+
+        // Accessing the float channel data
+        guard let floatChannelData = buffer.floatChannelData else {
+            fatalError("Failed to access float channel data.")
+        }
+
+        // Fill the buffer with dummy audio data
+        for channel in 0..<channels {
+            for frame in 0..<Int(frameLength) {
+                floatChannelData[Int(channel)][frame] = 0.0
+            }
+        }
+
+        // Set the frame length to indicate valid audio samples
+        buffer.frameLength = frameLength
+
+        
+        printBufferInfo(buffer: buffer)
         
         let audioBuffer = AudioBuffer(buffer: buffer)
         self.audioEngineManager = AudioEngineManager(buffer: audioBuffer)
