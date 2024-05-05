@@ -80,7 +80,7 @@ class AudioEngineManager: NSObject, ObservableObject {
                 let bufferCopy = buffer
                 
                 DispatchQueue.main.async {
-                    self.magnitude.magnitude = avgRMS
+                    self.magnitude.value = avgRMS
 //                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
                     //copy data to buffer
 //                    printMemoryAddress(bufferCopy, message: "DispatchQueue.main.async")

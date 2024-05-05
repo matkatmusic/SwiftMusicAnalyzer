@@ -31,13 +31,7 @@ class AudioFileLoader: ObservableObject {
 }
 
 class Magnitude: ObservableObject {
-    @Published var magnitude: CGFloat = 0
-    {
-        didSet
-        {
-//            print( "Magnitude: \(magnitude)" )
-        }
-    }
+    @Published var value: CGFloat = 0
 }
 
 class Magnitudes: ObservableObject
@@ -185,11 +179,11 @@ struct Meter : View
         { geometry in
             let h = geometry.size.height
             let w = geometry.size.width
-            let _ = print( "Mag: \(mag.magnitude) ")
+            let _ = print( "Mag: \(mag.value) ")
             Rectangle().frame(width: w,
-                              height: h * mag.magnitude)
+                              height: h * mag.value)
             .foregroundColor(.yellow)
-            .offset(y: (1 - mag.magnitude) * h)
+            .offset(y: (1 - mag.value) * h)
         }
         .background(.black)
     }
