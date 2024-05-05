@@ -30,7 +30,7 @@ struct ContentView: View {
         analyzer = Analyzer()
         
 //        meter = MusicPlayer(buffer: audioEngineManager.buffer)
-        meter = Meter(mag: audioEngineManager.$magnitude.magnitude)
+        meter = Meter(mag: audioEngineManager.magnitude)
         playerControls = PlayerControls(musicPlayer: audioEngineManager)
         
         self.audioEngineManager.buffer.addListener(analyzer.binManager)

@@ -179,16 +179,17 @@ class AudioBuffer: ObservableObject
 
 struct Meter : View
 {
-    @Binding var mag: CGFloat
+    @ObservedObject var mag: Magnitude
     var body : some View {
         GeometryReader
         { geometry in
             let h = geometry.size.height
             let w = geometry.size.width
+            let _ = print( "Mag: \(mag.magnitude) ")
             Rectangle().frame(width: w,
-                              height: h * mag)
+                              height: h * mag.magnitude)
             .foregroundColor(.yellow)
-            .offset(y: (1 - mag) * h)
+            .offset(y: (1 - mag.magnitude) * h)
         }
         .background(.black)
     }
@@ -197,13 +198,14 @@ struct Meter : View
 struct MusicPlayer: View {
     var body: some View {
         Text("Music Player")
-        Meter(mag: $magnitude.magnitude)
+        Meter(mag: magnitude)
             .frame(width: 100, height: 300)
     }
     
-    @ObservedObject var magnitude = Magnitude()
+    @ObservedObject var magnitude: Magnitude
 }
 
 #Preview {
-    return MusicPlayer()
+    let mag = Magnitude()
+    return MusicPlayer(magnitude: mag)
 }
