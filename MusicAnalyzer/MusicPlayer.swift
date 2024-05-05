@@ -174,6 +174,7 @@ class AudioBuffer: ObservableObject
 struct Meter : View
 {
     @ObservedObject var mag: ObservedFloat
+    var fillColor: Color
     var body : some View {
         GeometryReader
         { geometry in
@@ -182,24 +183,24 @@ struct Meter : View
             let _ = print( "Mag: \(mag.value) ")
             Rectangle().frame(width: w,
                               height: h * mag.value)
-            .foregroundColor(.yellow)
+            .foregroundColor(fillColor)
             .offset(y: (1 - mag.value) * h)
         }
-        .background(.black)
+//        .background(.black)
     }
 }
 
-struct MusicPlayer: View {
-    var body: some View {
-        Text("Music Player")
-        Meter(mag: magnitude)
-            .frame(width: 100, height: 300)
-    }
-    
-    @ObservedObject var magnitude: ObservedFloat
-}
+//struct MusicPlayer: View {
+//    var body: some View {
+//        Text("Music Player")
+//        Meter(mag: magnitude)
+//            .frame(width: 100, height: 300)
+//    }
+//    
+//    @ObservedObject var magnitude: ObservedFloat
+//}
 
 #Preview {
     let mag = ObservedFloat()
-    return MusicPlayer(magnitude: mag)
+    return Meter(mag: mag, fillColor: Color.green)
 }

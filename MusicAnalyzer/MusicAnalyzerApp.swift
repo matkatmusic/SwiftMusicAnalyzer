@@ -25,7 +25,10 @@ class AudioEngineManager: NSObject, ObservableObject {
     @ObservedObject var audioFileLoader = AudioFileLoader()
     @State private var mixer: AVAudioMixerNode = AVAudioMixerNode()
     
-    @ObservedObject var magnitude = ObservedFloat()
+    @ObservedObject var leftMagnitude = ObservedFloat()
+    @ObservedObject var rightMagnitude = ObservedFloat()
+    @ObservedObject var leftPeakValue = ObservedFloat()
+    @ObservedObject var rightPeakValue = ObservedFloat()
     @ObservedObject var buffer: AudioBuffer
 
     init(buffer: AudioBuffer)
@@ -52,6 +55,21 @@ class AudioEngineManager: NSObject, ObservableObject {
         return rms
     }
     
+    static func computePeak(buffer: AVAudioPCMBuffer, chan: UInt32) -> CGFloat
+    {
+        let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![Int(chan)],
+                                                   count: Int(buffer.frameLength)))
+        
+        var peak: CGFloat = 0
+        for i in 0..<floatArray.count
+        {
+            peak = max(peak,
+                       abs(CGFloat(floatArray[i])))
+        }
+        
+        return peak
+    }
+    
     func setupAudioEngine()
     {
         do
@@ -68,19 +86,27 @@ class AudioEngineManager: NSObject, ObservableObject {
                                        block: { buffer, time in
 //                self.buffer = buffer
                 
-                var avgRMS = 0.0
-                for ch in 0 ..< buffer.format.channelCount
-                {
-                    let rms = AudioEngineManager.computeMagnitude(buffer: buffer, chan: ch)
-                    avgRMS += rms
-                }
+//                var avgRMS = 0.0
+//                for ch in 0 ..< buffer.format.channelCount
+//                {
+//                    let rms = AudioEngineManager.computeMagnitude(buffer: buffer, chan: ch)
+//                    avgRMS += rms
+//                }
+//                
+//                avgRMS /= Double(buffer.format.channelCount)
                 
-                avgRMS /= Double(buffer.format.channelCount)
+                let leftRMS = AudioEngineManager.computeMagnitude(buffer: buffer, chan: 0)
+                let rightRMS = AudioEngineManager.computeMagnitude(buffer: buffer, chan: 1)
+                let leftPeak = AudioEngineManager.computePeak(buffer: buffer, chan: 0)
+                let rightPeak = AudioEngineManager.computePeak(buffer: buffer, chan: 1)
                 
                 let bufferCopy = buffer
                 
                 DispatchQueue.main.async {
-                    self.magnitude.value = avgRMS
+                    self.leftMagnitude.value = leftRMS
+                    self.rightMagnitude.value = rightRMS
+                    self.leftPeakValue.value = leftPeak
+                    self.rightPeakValue.value = rightPeak
 //                    printMemoryAddress(self.buffer.buffer, message: "MusicPlayer::createConnections::installTap")
                     //copy data to buffer
 //                    printMemoryAddress(bufferCopy, message: "DispatchQueue.main.async")

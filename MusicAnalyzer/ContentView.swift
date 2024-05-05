@@ -12,7 +12,11 @@ struct ContentView: View {
     @ObservedObject var audioEngineManager: AudioEngineManager
     
 //    var musicPlayer: MusicPlayer
-    var meter: Meter
+    var leftRMSMeter: Meter
+    var rightRMSMeter: Meter
+    var leftPeakMeter: Meter
+    var rightPeakMeter: Meter
+    
     var analyzer: Analyzer
     var playerControls: PlayerControls
     
@@ -20,7 +24,19 @@ struct ContentView: View {
         return VStack {
             analyzer
             playerControls
-            meter.frame(height: 250)
+//            leftRMSMeter.frame(height: 250)
+            
+            HStack{
+                ZStack{
+                    leftPeakMeter.frame(width: 100)
+                    leftRMSMeter.frame(width: 75)
+                }
+                ZStack
+                {
+                    rightPeakMeter.frame(width: 100)
+                    rightRMSMeter.frame(width: 75)
+                }
+            }.frame(height: 250)
         }
         .padding()
     }
@@ -29,8 +45,14 @@ struct ContentView: View {
         self.audioEngineManager = audioEngineManager
         analyzer = Analyzer()
         
-//        meter = MusicPlayer(buffer: audioEngineManager.buffer)
-        meter = Meter(mag: audioEngineManager.magnitude)
+        leftRMSMeter = Meter(mag: audioEngineManager.leftMagnitude, 
+                             fillColor: Color.green)
+        leftPeakMeter = Meter(mag: audioEngineManager.leftPeakValue,
+                              fillColor: Color.blue)
+        rightRMSMeter = Meter(mag: audioEngineManager.rightMagnitude,
+                              fillColor: Color.green)
+        rightPeakMeter = Meter(mag: audioEngineManager.rightPeakValue,
+                               fillColor: Color.blue)
         playerControls = PlayerControls(musicPlayer: audioEngineManager)
         
         self.audioEngineManager.buffer.addListener(analyzer.binManager)
