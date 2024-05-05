@@ -30,7 +30,7 @@ class AudioFileLoader: ObservableObject {
     }
 }
 
-class Magnitude: ObservableObject {
+class ObservedFloat: ObservableObject {
     @Published var value: CGFloat = 0
 }
 
@@ -173,7 +173,7 @@ class AudioBuffer: ObservableObject
 
 struct Meter : View
 {
-    @ObservedObject var mag: Magnitude
+    @ObservedObject var mag: ObservedFloat
     var body : some View {
         GeometryReader
         { geometry in
@@ -196,10 +196,10 @@ struct MusicPlayer: View {
             .frame(width: 100, height: 300)
     }
     
-    @ObservedObject var magnitude: Magnitude
+    @ObservedObject var magnitude: ObservedFloat
 }
 
 #Preview {
-    let mag = Magnitude()
+    let mag = ObservedFloat()
     return MusicPlayer(magnitude: mag)
 }

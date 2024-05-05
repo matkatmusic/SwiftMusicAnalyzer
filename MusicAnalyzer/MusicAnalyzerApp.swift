@@ -25,7 +25,7 @@ class AudioEngineManager: NSObject, ObservableObject {
     @ObservedObject var audioFileLoader = AudioFileLoader()
     @State private var mixer: AVAudioMixerNode = AVAudioMixerNode()
     
-    @ObservedObject var magnitude = Magnitude()
+    @ObservedObject var magnitude = ObservedFloat()
     @ObservedObject var buffer: AudioBuffer
 
     init(buffer: AudioBuffer)
