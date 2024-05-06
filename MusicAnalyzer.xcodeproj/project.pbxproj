@@ -24,6 +24,8 @@
 		EA2DA67D2BE731BE00223CF5 /* AudioBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */; };
 		EA2DA6802BE750EC00223CF5 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = EA2DA67F2BE750EC00223CF5 /* Atomics */; };
 		EA2DA6822BE7511F00223CF5 /* AbstractFifo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */; };
+		EA2DA6842BE9770400223CF5 /* AVAudioPCMBufferCircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6832BE9770400223CF5 /* AVAudioPCMBufferCircularBuffer.swift */; };
+		EA2DA6862BE9773A00223CF5 /* SingleChannelSampleFifo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6852BE9773A00223CF5 /* SingleChannelSampleFifo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileLoader.swift; sourceTree = "<group>"; };
 		EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioBuffer.swift; sourceTree = "<group>"; };
 		EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFifo.swift; sourceTree = "<group>"; };
+		EA2DA6832BE9770400223CF5 /* AVAudioPCMBufferCircularBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAudioPCMBufferCircularBuffer.swift; sourceTree = "<group>"; };
+		EA2DA6852BE9773A00223CF5 /* SingleChannelSampleFifo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChannelSampleFifo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +166,8 @@
 				EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */,
 				EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */,
 				EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */,
+				EA2DA6832BE9770400223CF5 /* AVAudioPCMBufferCircularBuffer.swift */,
+				EA2DA6852BE9773A00223CF5 /* SingleChannelSampleFifo.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -308,8 +314,10 @@
 				EA2DA67D2BE731BE00223CF5 /* AudioBuffer.swift in Sources */,
 				EA2DA66E2BE07FD700223CF5 /* PlayerControls.swift in Sources */,
 				EA2DA6432BE07FAD00223CF5 /* ContentView.swift in Sources */,
+				EA2DA6862BE9773A00223CF5 /* SingleChannelSampleFifo.swift in Sources */,
 				EA2DA6722BE07FF500223CF5 /* Analyzer.swift in Sources */,
 				EA2DA6762BE730A900223CF5 /* Meter.swift in Sources */,
+				EA2DA6842BE9770400223CF5 /* AVAudioPCMBufferCircularBuffer.swift in Sources */,
 				EA2DA6412BE07FAD00223CF5 /* MusicAnalyzerApp.swift in Sources */,
 				EA2DA66C2BE07FC000223CF5 /* MusicPlayer.swift in Sources */,
 				EA2DA6822BE7511F00223CF5 /* AbstractFifo.swift in Sources */,
