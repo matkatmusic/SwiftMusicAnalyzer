@@ -41,11 +41,6 @@ func printBufferInfo(buffer: AVAudioPCMBuffer)
     print( "buffer info: magnitude : \(AudioEngineManager.computeMagnitude(buffer: buffer, chan: 0))")
 }
 
-protocol AudioBufferListener: AnyObject
-{
-    func bufferDidChange(buffer: AVAudioPCMBuffer)
-}
-
 func copyBuffer(source: AVAudioPCMBuffer, destination: inout AVAudioPCMBuffer) 
 {
 //    printBufferInfo(buffer: source)

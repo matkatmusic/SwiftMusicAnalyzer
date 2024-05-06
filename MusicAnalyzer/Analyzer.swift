@@ -41,16 +41,45 @@ struct Bar : View
 
 class Bins: ObservableObject
 {
-    @Published var values: [Float]
+    @Published var values: [Float] = []
+    @Published var order: Int = 10
     init()
     {
-        self.values = Array<Float>(repeating: 0, count: 1024)
+        //set up an observer for the order property
+        _ = $order.sink { _ in
+            self.updateValues()
+        }
+        
+        self.updateValues()
+    }
+    
+    private func updateValues()
+    {
+        let countDouble = NSDecimalNumber(decimal: pow(2.0, self.order))
+        
+        let count = Int(countDouble.intValue)
+        
+        self.values = Array<Float>(repeating: 0,
+                                   count: count)
     }
 }
 
 class BinManager : AudioBufferListener
 {
     @ObservedObject var bins: Bins = Bins()
+    
+    private var leftSCSF: SingleChannelSampleFifo = SingleChannelSampleFifo(channel: Channel.Left)
+//    private var rightSCSF: SingleChannelSampleFifo = SingleChannelSampleFifo(channel: Channel.Right)
+    
+    func prepare(bufferSize: Int)
+    {
+        //make sure bufferSize is a power of 2!!!
+        assert( (bufferSize & (bufferSize - 1)) == 0)
+        
+        leftSCSF.prepare(bufferSize: bufferSize)
+//        rightSCSF.prepare(bufferSize: bufferSize)
+    }
+    
     func bufferDidChange(buffer: AVAudioPCMBuffer)
     {
         if( buffer.floatChannelData == nil )
@@ -71,36 +100,105 @@ class BinManager : AudioBufferListener
             return
         }
         
-        refreshBins(buffer: buffer)
+//        printBufferInfo(buffer: buffer)
+        leftSCSF.update(buffer: buffer)
+//        if( buffer.format.channelCount > 1 )
+//        {
+////            rightSCSF.update(buffer: buffer)
+//        }
+//        
+        var tempBuf: AVAudioPCMBuffer = AVAudioPCMBuffer()
+        while leftSCSF.getNumCompleteBuffersAvailable() > 0
+        {
+            if leftSCSF.getAudioBuffer(buf: &tempBuf)
+            {
+                printBufferInfo(buffer: tempBuf)
+                var mags = refreshBins(buffer: tempBuf)
+                
+            }
+        }
     }
     
-    func refreshBins(buffer: AVAudioPCMBuffer)
+    func refreshBins(buffer: AVAudioPCMBuffer) -> [Float]?
     {
         var binTotals: [Float] = []
-        for chan in 0 ..< buffer.stride
+        
+        var channels: [[Float]] = []
+        if( buffer.format.isInterleaved )
         {
-            let floatArray = Array(UnsafeBufferPointer(start: buffer.floatChannelData![chan],
-                                                       count: Int(buffer.frameLength)))
-            
-            
-            let bins = Analyzer.performFFT(input: floatArray)
-            
-            //split the bins into 24
-            for i in 0 ..< bins.count
+            assert(false)
+        }
+        else
+        {
+            for channel in 0..<buffer.format.channelCount 
             {
-                if( binTotals.count <= i )
+                if let channelData = buffer.floatChannelData?[Int(channel)] 
                 {
-                    binTotals.append(bins[i])
-                }
-                else
-                {
-                    binTotals[i] += bins[i]
+                    let channelArray = Array(UnsafeBufferPointer(start: channelData, count: Int(buffer.frameLength)))
+                    channels.append(channelArray)
                 }
             }
         }
         
+        var outputMags: [[Float]] = []
+        //fill 'binTotals' with as many zeros as there are samples in the input buffer
+        //TODO: is this same as channels.first!.count?
+        binTotals = [Float](repeating: 0, count: Int(buffer.frameLength))
+        
+        for channel in channels 
+        {
+            //https://stackoverflow.com/questions/60120842/how-to-use-apples-accelerate-framework-in-swift-in-order-to-compute-the-fft-of
+            //https://gist.github.com/jeremycochoy/45346cbfe507ee9cb96a08c049dfd34f
+            //the length of the input
+            let length = vDSP_Length(channel.count)
+
+            // The power of two of two times the length of the input.
+            // Do not forget this factor 2.
+            let log2n = vDSP_Length(ceil(log2(Float(length * 2))))
+            
+            // Create the instance of the FFT class which allow computing FFT of complex vector with length
+            // up to `length`.
+            let fftSetup = vDSP.FFT(log2n: log2n,
+                                    radix: .radix2,
+                                    ofType: DSPSplitComplex.self)!
+            
+            // --- Input / Output arrays
+            var forwardInputReal = [Float](channel) // Copy the signal here
+            var forwardInputImag = [Float](repeating: 0, count: Int(length))
+            var forwardOutputReal = [Float](repeating: 0, count: Int(length))
+            var forwardOutputImag = [Float](repeating: 0, count: Int(length))
+            var magnitudes = [Float](repeating: 0, count: Int(length))
+            
+            /// --- Compute FFT
+            forwardInputReal.withUnsafeMutableBufferPointer { forwardInputRealPtr in
+                forwardInputImag.withUnsafeMutableBufferPointer { forwardInputImagPtr in
+                    forwardOutputReal.withUnsafeMutableBufferPointer { forwardOutputRealPtr in
+                        forwardOutputImag.withUnsafeMutableBufferPointer { forwardOutputImagPtr in
+                            // Input
+                            let forwardInput = DSPSplitComplex(realp: forwardInputRealPtr.baseAddress!, imagp: forwardInputImagPtr.baseAddress!)
+                            // Output
+                            var forwardOutput = DSPSplitComplex(realp: forwardOutputRealPtr.baseAddress!, imagp: forwardOutputImagPtr.baseAddress!)
+                            
+                            fftSetup.forward(input: forwardInput, output: &forwardOutput)
+                            vDSP.absolute(forwardOutput, result: &magnitudes)
+                        }
+                    }
+                }
+            }
+            
+            outputMags.append(magnitudes)
+        }
+        
+        for ch in 0 ..< outputMags.count
+        {
+            for i in 0 ..< outputMags[ch].count
+            {
+                binTotals[i] += outputMags[ch][i]
+            }
+        }
+        
         //normalize the average magnitude of all channels for a particular bin
-        for i in 0 ..< binTotals.count
+        for i in 0 ..< outputMags.count
         {
             binTotals[i] /= Float(buffer.stride)
         }
@@ -113,12 +211,14 @@ class BinManager : AudioBufferListener
         
 //        print( "bins: \(binTotals.count)")
         self.bins.values = binTotals //this should refresh the view
+        return binTotals
     }
 }
 
 struct Analyzer : View
 {
     var binManager: BinManager = BinManager()
+    @ObservedObject var bins: Bins
     /*
      template <typename Type>
      Type mapToLog10 (Type value0To1, Type logRangeMin, Type logRangeMax)
@@ -144,6 +244,10 @@ struct Analyzer : View
         return pow(10.0, value0To1 * (logMax - logMin) + logMin)
     }
     
+    init()
+    {
+        bins = binManager.bins
+    }
     
     var body : some View
     {
@@ -177,7 +281,7 @@ struct Analyzer : View
                 
                 let binCount = endBin - startBin
                 
-                let binSum = self.binManager.bins.values[startBin..<endBin].reduce(0, { b1, b2 in
+                let binSum = self.bins.values[startBin..<endBin].reduce(0, { b1, b2 in
                     b1 + b2 })
                 let binAvg = binSum / Float(binCount)
                 
@@ -196,27 +300,56 @@ struct Analyzer : View
     /*
      Whenever the buffer is updated, calculate the magnitudes of each FFT bin and store them in the magnitudes array.
      */
-    static func performFFT(input: Array<Float>) -> [Float]
-    {
-        var real = input
-        var imaginary = [Float](repeating: 0.0, count: input.count)
-        var splitComplex = DSPSplitComplex(realp: &real, 
-                                           imagp: &imaginary)
+//    static func performFFT(input: [Float]) -> [Float]?
+//    {
+//        var real = input
+//        var imaginary = [Float](repeating: 0.0, count: input.count)
+//        var splitComplex = DSPSplitComplex(realp: &real,
+//                                           imagp: &imaginary)
+//        
+//        let length = vDSP_Length(log2(Float(input.count)))
+//        let radix = FFTRadix(kFFTRadix2)
+//        let weights = vDSP_create_fftsetup(length, radix)
+//        
+//        vDSP_fft_zip(weights!, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+//        
+//        vDSP_destroy_fftsetup(weights)
+//        
+//        // Calculate the magnitudes of the FFT result
+//        var magnitudes = [Float](repeating: 0.0, count: input.count)
+//        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
+//        
+//        return magnitudes
         
-        let length = vDSP_Length(log2(Float(input.count)))
-        let radix = FFTRadix(kFFTRadix2)
-        let weights = vDSP_create_fftsetup(length, radix)
-        
-        vDSP_fft_zip(weights!, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
-        
-        vDSP_destroy_fftsetup(weights)
-        
-        // Calculate the magnitudes of the FFT result
-        var magnitudes = [Float](repeating: 0.0, count: input.count)
-        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
-        
-        return magnitudes
-    }
+//        let length = input.count
+//        let log2n = vDSP_Length(log2(Float(length)))
+//        
+//        guard let fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2)) else {
+//            print("Error creating FFT setup")
+//            return nil
+//        }
+//        defer {
+//            vDSP_destroy_fftsetup(fftSetup)
+//        }
+//        
+//        var complexBuffer = [DSPComplex](repeating: DSPComplex(), count: length/2)
+//        var output = [Float](repeating: 0, count: length)
+//        
+//        // Pack the input into complex buffer (imaginary parts are 0)
+//        input.withUnsafeBytes {_ in 
+//            vDSP_ctoz([DSPComplex](unsafeUninitializedCapacity: length/2) { complexPtr, _ in
+//                complexPtr.initialize(from: complexPtr.baseAddress!.assumingMemoryBound(to: DSPComplex.self), count: length/2)
+//            }, 2, &complexBuffer, 1, vDSP_Length(length/2))
+//        }
+//        
+//        // Perform FFT
+//        vDSP_fft_zrip(fftSetup, &complexBuffer, 1, log2n, FFTDirection(FFT_FORWARD))
+//        
+//        // Calculate magnitude
+//        vDSP_zvmags(&complexBuffer, 1, &output, 1, vDSP_Length(length/2))
+//        
+//        return output
+//    }
     
 }
 

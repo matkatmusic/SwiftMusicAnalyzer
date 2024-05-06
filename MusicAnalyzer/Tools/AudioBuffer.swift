@@ -9,6 +9,11 @@ import Foundation
 
 import AVFoundation
 
+protocol AudioBufferListener: AnyObject
+{
+    func bufferDidChange(buffer: AVAudioPCMBuffer)
+}
+
 class AudioBuffer: ObservableObject
 {
     @Published var buffer: AVAudioPCMBuffer

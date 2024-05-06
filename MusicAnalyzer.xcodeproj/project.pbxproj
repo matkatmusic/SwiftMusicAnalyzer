@@ -22,6 +22,8 @@
 		EA2DA6792BE7315300223CF5 /* ObservedFloat.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */; };
 		EA2DA67B2BE7318100223CF5 /* AudioFileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */; };
 		EA2DA67D2BE731BE00223CF5 /* AudioBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */; };
+		EA2DA6802BE750EC00223CF5 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = EA2DA67F2BE750EC00223CF5 /* Atomics */; };
+		EA2DA6822BE7511F00223CF5 /* AbstractFifo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,7 @@
 		EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservedFloat.swift; sourceTree = "<group>"; };
 		EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileLoader.swift; sourceTree = "<group>"; };
 		EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioBuffer.swift; sourceTree = "<group>"; };
+		EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFifo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA2DA6802BE750EC00223CF5 /* Atomics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,6 +161,7 @@
 				EA2DA6782BE7315300223CF5 /* ObservedFloat.swift */,
 				EA2DA67A2BE7318100223CF5 /* AudioFileLoader.swift */,
 				EA2DA67C2BE731BE00223CF5 /* AudioBuffer.swift */,
+				EA2DA6812BE7511F00223CF5 /* AbstractFifo.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -177,6 +182,9 @@
 			dependencies = (
 			);
 			name = MusicAnalyzer;
+			packageProductDependencies = (
+				EA2DA67F2BE750EC00223CF5 /* Atomics */,
+			);
 			productName = MusicAnalyzer;
 			productReference = EA2DA63D2BE07FAD00223CF5 /* MusicAnalyzer.app */;
 			productType = "com.apple.product-type.application";
@@ -249,6 +257,9 @@
 				Base,
 			);
 			mainGroup = EA2DA6342BE07FAD00223CF5;
+			packageReferences = (
+				EA2DA67E2BE750EC00223CF5 /* XCRemoteSwiftPackageReference "swift-atomics" */,
+			);
 			productRefGroup = EA2DA63E2BE07FAD00223CF5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -301,6 +312,7 @@
 				EA2DA6762BE730A900223CF5 /* Meter.swift in Sources */,
 				EA2DA6412BE07FAD00223CF5 /* MusicAnalyzerApp.swift in Sources */,
 				EA2DA66C2BE07FC000223CF5 /* MusicPlayer.swift in Sources */,
+				EA2DA6822BE7511F00223CF5 /* AbstractFifo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +669,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EA2DA67E2BE750EC00223CF5 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-atomics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EA2DA67F2BE750EC00223CF5 /* Atomics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EA2DA67E2BE750EC00223CF5 /* XCRemoteSwiftPackageReference "swift-atomics" */;
+			productName = Atomics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EA2DA6352BE07FAD00223CF5 /* Project object */;
 }

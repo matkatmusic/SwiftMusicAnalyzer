@@ -44,6 +44,9 @@ struct ContentView: View {
     init(audioEngineManager: AudioEngineManager) {
         self.audioEngineManager = audioEngineManager
         analyzer = Analyzer()
+//        let session = AVAudioSession.sharedInstance()
+//        let numSamples = session.ioBufferDuration * session.sampleRate
+        analyzer.binManager.prepare(bufferSize: 1024)
         
         leftRMSMeter = Meter(mag: audioEngineManager.leftMagnitude, 
                              fillColor: Color.green)

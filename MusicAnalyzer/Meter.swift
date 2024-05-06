@@ -16,7 +16,7 @@ struct Meter : View
         { geometry in
             let h = geometry.size.height
             let w = geometry.size.width
-            let _ = print( "Mag: \(mag.value) ")
+//            let _ = print( "Mag: \(mag.value) ")
             Rectangle().frame(width: w,
                               height: h * mag.value)
             .foregroundColor(fillColor)
