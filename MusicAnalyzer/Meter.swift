@@ -9,7 +9,15 @@ import SwiftUI
 
 struct Meter : View
 {
+    /*
+     whenever mag changes, this view will refresh itself.
+     that's the power of ObservedObject!!
+     */
     @ObservedObject var mag: ObservedFloat
+    /*
+     fillColor is declared but not initialized.
+     this forces the member to be a constructor argument if no init() function is written
+     */
     var fillColor: Color
     var body : some View {
         GeometryReader

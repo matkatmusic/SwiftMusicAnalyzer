@@ -11,7 +11,10 @@ import AVFAudio
 struct ContentView: View {
     @ObservedObject var audioEngineManager: AudioEngineManager
     
-//    var musicPlayer: MusicPlayer
+    /*
+     None of these member variables are initialized
+     this means either an init() function must be used, or they must be passed as constructor arguments when a ContentView is created.
+     */
     var leftRMSMeter: Meter
     var rightRMSMeter: Meter
     var leftPeakMeter: Meter
@@ -26,8 +29,8 @@ struct ContentView: View {
             playerControls
 //            leftRMSMeter.frame(height: 250)
             
-            HStack{
-                ZStack{
+            HStack{ //a horizontal stack of two Z-order stacks.
+                ZStack{ //Z-order stack.  items closer to the top are further back in the z-order
                     leftPeakMeter.frame(width: 100)
                     leftRMSMeter.frame(width: 75)
                 }
@@ -41,11 +44,15 @@ struct ContentView: View {
         .padding()
     }
     
-    init(audioEngineManager: AudioEngineManager) {
+    init(audioEngineManager: AudioEngineManager) 
+    {
         self.audioEngineManager = audioEngineManager
         analyzer = Analyzer()
-//        let session = AVAudioSession.sharedInstance()
-//        let numSamples = session.ioBufferDuration * session.sampleRate
+        /*
+         the binManager lives in the analyzer
+         it is default-constructed, but not prepared.
+         prepare must be manually called after the object has been constructed
+         */
         analyzer.binManager.prepare(bufferSize: 1024)
         
         leftRMSMeter = Meter(mag: audioEngineManager.leftMagnitude, 
@@ -56,8 +63,15 @@ struct ContentView: View {
                               fillColor: Color.green)
         rightPeakMeter = Meter(mag: audioEngineManager.rightPeakValue,
                                fillColor: Color.blue)
+        
+        /*
+         because the PlayerControls class does not have an init function, the constructor argument here is actually the name of the member variable that needs initialization in this class. 
+         */
         playerControls = PlayerControls(musicPlayer: audioEngineManager)
         
+        /*
+         by telling the binManager to listen to the buffer, the binManager can be notified whenever the contents of the buffer changes, and thus process the changed buffer accordingly.
+         */
         self.audioEngineManager.buffer.addListener(analyzer.binManager)
     }
 }

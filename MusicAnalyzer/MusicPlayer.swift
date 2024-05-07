@@ -76,6 +76,22 @@ func copyBuffer(source: AVAudioPCMBuffer, destination: inout AVAudioPCMBuffer)
     }
     
     
+    /*
+     with guard statements, you can declare local variables and check that they're valid before use
+     if they aren't, you can exit the code early.
+     it's the C++ equivalent of:
+     if( auto sourceData = source.floatChannelData )
+     {
+        if( destinationData = destination.floatChannelData )
+        {
+            //both variables are now valid.
+        }
+     }
+     else
+     {
+        return;
+     }
+     */
     guard let sourceData = source.floatChannelData,
           let destinationData = destination.floatChannelData else {
         return
@@ -92,6 +108,7 @@ func copyBuffer(source: AVAudioPCMBuffer, destination: inout AVAudioPCMBuffer)
         // Copy data from source buffer to destination buffer
         memcpy(destinationChannelData, 
                sourceChannelData,
+               //MemoryLayout<Float>.size is equivalent to C++'s sizeof(Float)
                MemoryLayout<Float>.size * frames)
     }
     

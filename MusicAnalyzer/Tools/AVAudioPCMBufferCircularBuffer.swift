@@ -65,10 +65,15 @@ struct AVAudioPCMBufferCircularBuffer
         }
     }
 
+    /*
+     'inout' is required here because we are assigning a new instance of AVAudioPCMBuffer to 'buffer'
+     without it, 'buffer' is a 'let' constant and we are mutating it via 'buffer = array[readIndex]!
+     */
     mutating func pull(buffer: inout AVAudioPCMBuffer) -> Bool
     {
         if isEmpty { return false }
         
+        //the array holds optionals, so force-unwrapping '!' is required to access the unwrapped PCMBuffer
         buffer = array[readIndex]!
         readIndex = (readIndex + 1) % array.count
         isFull_ = false
@@ -90,7 +95,7 @@ struct AVAudioPCMBufferCircularBuffer
         
         /*
          the difference between the write index and read index can sometimes be a negative value.
-         adding array.count to it and the performing modulo on the sum will produce an accurate count.  
+         adding array.count to it and the performing modulo on the sum will produce an accurate count.
          */
         return (writeIndex - readIndex + array.count) % array.count
     }

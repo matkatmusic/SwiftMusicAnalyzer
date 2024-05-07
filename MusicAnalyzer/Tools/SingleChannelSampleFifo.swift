@@ -28,6 +28,9 @@ class SingleChannelSampleFifo
     private var fifoIndex: Int = 0
     
     private var audioBufferFifo = AVAudioPCMBufferCircularBuffer(size: 50)
+    /*
+     I want a concrete instance of AVAudioPCMBuffer so I don't have to use '!' every where I use the variable
+     */
     private var bufferToFill = AVAudioPCMBuffer()
     private var prepared = false
     private var size: Int = 0
@@ -69,6 +72,11 @@ class SingleChannelSampleFifo
     func getSize() -> Int { return size }
     //==============================================================================
 
+    /*
+     tagging a function parameter with 'inout' converts that parameter into a reference.
+     Class types are passed by reference, which means NORMALLY 'inout' is not required here.
+     However, because the pull function is changing the reference intself by assigning a completely new object to the parameter, we do need to use 'inout' here.
+     */
     func getAudioBuffer(buf: inout AVAudioPCMBuffer) -> Bool
     {
         return audioBufferFifo.pull(buffer: &buf)
@@ -86,6 +94,8 @@ class SingleChannelSampleFifo
          floatChannelData is an optional, so we must force-unwrap it in order to access the underlying buffers
          */
         bufferToFill.floatChannelData![0][fifoIndex] = sample
+        //Swift does not support ++ or --.  instead you must use += or -=
+        //I bet the reason is because post-inc vs pre-inc has been the source of many bugs over the years.
         fifoIndex += 1;
     }
 }

@@ -113,8 +113,7 @@ class BinManager : AudioBufferListener
             if leftSCSF.getAudioBuffer(buf: &tempBuf)
             {
                 printBufferInfo(buffer: tempBuf)
-                var mags = refreshBins(buffer: tempBuf)
-                
+                var _ = refreshBins(buffer: tempBuf)
             }
         }
     }
@@ -210,6 +209,11 @@ class BinManager : AudioBufferListener
         }
         
 //        print( "bins: \(binTotals.count)")
+        /*
+         bins is an ObservableObject
+         the Analyzer is observing the Bins instance
+         this line causes the Analyzer's view to refresh
+         */
         self.bins.values = binTotals //this should refresh the view
         return binTotals
     }
@@ -233,7 +237,10 @@ struct Analyzer : View
      }
      */
     //a port of the JUCE mapToLog10 function:
-    func mapToLog10(_ value0To1: CGFloat, _ logRangeMin: CGFloat, _ logRangeMax: CGFloat) -> CGFloat
+    //the '_' is used to indicate that you don't need to specify the parameter name when calling the function.
+    func mapToLog10(_ value0To1: CGFloat,
+                    _ logRangeMin: CGFloat,
+                    _ logRangeMax: CGFloat) -> CGFloat
     {
         assert( logRangeMin > 0 )
         assert( logRangeMax > 0 )
@@ -268,6 +275,14 @@ struct Analyzer : View
              convert the width of a bar into a frequency range.
              */
             
+            /*
+             this ForEach is the equivalent of:
+             for( auto barNum = 0; barNum < numBars; ++i )
+             
+             the id: \.self is the sneaky bit.
+             it's literally saying "whatever counter you're using to count from 0 ..< numBars, pass that into the function as 'id'
+             and then the closure parameter 'barNum' is kind of an alias to that 'id' value.
+             */
             ForEach(0..<numBars, id: \.self) { barNum in
                 let startFreq = self.mapToLog10(CGFloat(barNum) / CGFloat(numBars),
                                            20,
@@ -281,6 +296,15 @@ struct Analyzer : View
                 
                 let binCount = endBin - startBin
                 
+                /*
+                 this sneaky line of code calls the 'reduce' function on the range [startBin, endBin).
+                 reduce returns the accumulated value of applying some closure to all of the values in the range. the closure takes two values.  in our case, the two values are being added together.
+                 
+                 this is the C++ equivalent of
+                 auto binSum = std::accumulate(values.begin() + startBin,
+                                               values.begin() + endBin,
+                                               [](auto b1, auto b2) { return b1 + b2; } );
+                 */
                 let binSum = self.bins.values[startBin..<endBin].reduce(0, { b1, b2 in
                     b1 + b2 })
                 let binAvg = binSum / Float(binCount)
@@ -288,6 +312,9 @@ struct Analyzer : View
                 let mag = CGFloat(binAvg)
                 let x = barWidth * CGFloat(barNum)
                 
+                /*
+                 every time the view is refreshed, the Bars are recreated from the updated accumulated magnitudes. 
+                 */
                 Bar(mag: mag)
                     .frame(width: barWidth,
                            height: h)
@@ -300,119 +327,8 @@ struct Analyzer : View
     /*
      Whenever the buffer is updated, calculate the magnitudes of each FFT bin and store them in the magnitudes array.
      */
-//    static func performFFT(input: [Float]) -> [Float]?
-//    {
-//        var real = input
-//        var imaginary = [Float](repeating: 0.0, count: input.count)
-//        var splitComplex = DSPSplitComplex(realp: &real,
-//                                           imagp: &imaginary)
-//        
-//        let length = vDSP_Length(log2(Float(input.count)))
-//        let radix = FFTRadix(kFFTRadix2)
-//        let weights = vDSP_create_fftsetup(length, radix)
-//        
-//        vDSP_fft_zip(weights!, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
-//        
-//        vDSP_destroy_fftsetup(weights)
-//        
-//        // Calculate the magnitudes of the FFT result
-//        var magnitudes = [Float](repeating: 0.0, count: input.count)
-//        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
-//        
-//        return magnitudes
-        
-//        let length = input.count
-//        let log2n = vDSP_Length(log2(Float(length)))
-//        
-//        guard let fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2)) else {
-//            print("Error creating FFT setup")
-//            return nil
-//        }
-//        defer {
-//            vDSP_destroy_fftsetup(fftSetup)
-//        }
-//        
-//        var complexBuffer = [DSPComplex](repeating: DSPComplex(), count: length/2)
-//        var output = [Float](repeating: 0, count: length)
-//        
-//        // Pack the input into complex buffer (imaginary parts are 0)
-//        input.withUnsafeBytes {_ in 
-//            vDSP_ctoz([DSPComplex](unsafeUninitializedCapacity: length/2) { complexPtr, _ in
-//                complexPtr.initialize(from: complexPtr.baseAddress!.assumingMemoryBound(to: DSPComplex.self), count: length/2)
-//            }, 2, &complexBuffer, 1, vDSP_Length(length/2))
-//        }
-//        
-//        // Perform FFT
-//        vDSP_fft_zrip(fftSetup, &complexBuffer, 1, log2n, FFTDirection(FFT_FORWARD))
-//        
-//        // Calculate magnitude
-//        vDSP_zvmags(&complexBuffer, 1, &output, 1, vDSP_Length(length/2))
-//        
-//        return output
-//    }
-    
-}
-
-struct AnalyzerOld: View {
-    var magnitudes: [CGFloat]
-    
-    var body : some View {
-        GeometryReader { geometry in
-            let h = geometry.size.height
-            let w = geometry.size.width
-            
-            let numBars = magnitudes.count
-            let barWidth = w / CGFloat(numBars)
-            ForEach(0..<numBars, id: \.self) { i in
-                let mag = magnitudes[i]
-                let x = barWidth * CGFloat(i)
-                
-                Bar(mag: mag)
-                    .frame(width: barWidth,
-                           height: h)
-                    .position(x: x + barWidth / 2)
-                    .offset(y: h / 2)
-            }
-        }
-    }
 }
 
 #Preview {
-//    let mags: [CGFloat] = [0.5, 0.7, 0.3, 0.9, 0.1]
-//    return Analyzer(magnitudes: mags)
-//    let buffer = Buffer()
-//    let sampleRate = 48000.0
-//    let format = AVAudioFormat(commonFormat: AVAudioCommonFormat.pcmFormatFloat32,
-//                               sampleRate: sampleRate,
-//                               channels: AVAudioChannelCount(2),
-//                               interleaved: false)!
-//    
-//    let frameCapacity = AVAudioFrameCount(2048)
-//    
-//    var buffer = AVAudioPCMBuffer(pcmFormat: format,
-//                                     frameCapacity: frameCapacity)
-////    else {
-////        fatalError("failed to create AVAudioPCMBuffer in Preview!!")
-////    }
-//    
-//    let frequency = Float(1000)
-//    let amplitude = Float(0.5)
-//
-//    for frame in 0..<Int(frameCapacity) {
-//        let time = Float(frame) / Float(sampleRate)
-//        let value = sin(2.0 * .pi * frequency * time) * amplitude
-//        //copy the value to each channel
-//        for ch in 0 ..< Int(format.channelCount )
-//        {
-//            buffer?.floatChannelData![ch][frame] = value
-//        }
-//    }
-//
-//    // Set the frame length to the frame capacity to indicate that the buffer is full
-//    buffer?.frameLength = frameCapacity
-//    
-//    let audioBuffer = AudioBuffer(buffer: buffer!)
-    
-//    return Analyzer(buf: audioBuffer)
     Analyzer()
 }
