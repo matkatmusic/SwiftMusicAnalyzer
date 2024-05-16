@@ -10,6 +10,16 @@ import AVFAudio
 
 import Foundation
 
+class Idea
+{
+    private var buffer: AudioBuffer = AudioBuffer(buffer: getBufferFromAudioSession(numChannels: nil, numSamples: nil))
+    @ObservedObject var audioEngineManager: AudioEngineManager// = AudioEngineManager(buffer: buffer)
+    init()
+    {
+        audioEngineManager = AudioEngineManager(buffer: self.buffer)
+    }
+}
+
 
 func printMemoryAddress<T>(_ object: T, message: String)
 {
